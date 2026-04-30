@@ -1,29 +1,16 @@
-app.post('/webhook', async (req, res) => {
-  const message = req.body.entry[0].changes[0].value.messages[0];
-  const userText = message.text.body;
-
-  // Chama Claude
-  const claudeRes = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: { 'x-api-key': ANTHROPIC_KEY, 'anthropic-version': '2023-06-01' },
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 1000,
-      messages: [{ role: 'user', content: userText }]
-    })
-  });
-  const reply = (await claudeRes.json()).content[0].text;
-
-  // Envia resposta no WhatsApp
-  await fetch(`https://graph.facebook.com/v19.0/${PHONE_NUMBER_ID}/messages`, {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${WA_TOKEN}` },
-    body: JSON.stringify({
-      messaging_product: 'whatsapp',
-      to: message.from,
-      text: { body: reply }
-    })
-  });
-
-  res.sendStatus(200);
-});
+{
+  "name": "whatsapp-bot-pastoral",
+  "version": "1.0.0",
+  "description": "Bot WhatsApp com aprovação pastoral - IPAquarius",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "twilio": "^4.23.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
